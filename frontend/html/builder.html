@@ -1,0 +1,1167 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>SmartCV – Builder</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <!-- html2pdf for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --pu: #7C3AED;
+      --pu2: #6D28D9;
+      --pl: #A78BFA;
+      --tx: #1a1a2e;
+      --mt: #6b7280;
+      --bd: #e5e7eb;
+      --bg: #f8f8fc;
+      --wh: #ffffff;
+      --btn-hov: #ede9fe;
+      --danger: #ef4444;
+      --danger-bg: #fee2e2;
+      --nav-bg: rgba(255, 255, 255, 0.95);
+      --sh: 0 8px 30px rgba(0, 0, 0, 0.06);
+      --preview-bg: #e2e8f0;
+    }
+
+    [data-theme="dark"] {
+      --tx: #f1f5f9;
+      --mt: #94a3b8;
+      --bd: #334155;
+      --bg: #0f172a;
+      --wh: #1e293b;
+      --nav-bg: rgba(30, 41, 59, 0.95);
+      --btn-hov: #334155;
+      --danger-bg: #451a1a;
+      --sh: 0 8px 30px rgba(0, 0, 0, 0.4);
+      --preview-bg: #0b0f19;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--tx);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--bd);
+      padding: 0 20px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--tx);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--pu), var(--pl));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav-l,
+    .nav-r {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sep {
+      width: 1px;
+      height: 24px;
+      background: var(--bd);
+    }
+
+    #cvTitle {
+      font: 700 16px 'Plus Jakarta Sans', sans-serif;
+      color: var(--tx);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      outline: none;
+      padding: 4px 8px;
+      min-width: 150px;
+      transition: .2s;
+    }
+
+    #cvTitle:focus {
+      border-color: var(--pu);
+    }
+
+    .btn-icon {
+      background: var(--wh);
+      border: 1.5px solid var(--bd);
+      color: var(--mt);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .btn-icon:hover {
+      border-color: var(--pu);
+      color: var(--pu);
+      background: var(--btn-hov);
+    }
+
+    .btn-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .btn-ai {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #faf0ff;
+      border: 1.5px solid #ddd6fe;
+      color: var(--pu);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font: 700 13px 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    [data-theme="dark"] .btn-ai {
+      background: rgba(124, 58, 237, 0.1);
+      border-color: rgba(124, 58, 237, 0.3);
+    }
+
+    .btn-ai:hover {
+      background: var(--btn-hov);
+    }
+
+    .btn-pdf {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--wh);
+      border: 1.5px solid var(--bd);
+      color: var(--tx);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font: 700 13px 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .btn-pdf:hover {
+      border-color: var(--pu);
+      color: var(--pu);
+    }
+
+    .btn-pdf svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, var(--pu), var(--pu2));
+      color: #fff;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 10px;
+      font: 700 14px 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, .3);
+      transition: .2s;
+    }
+
+    .btn-save:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, .4);
+    }
+
+    .user-badge-sm {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1.5px solid var(--bd);
+      border-radius: 100px;
+      padding: 4px 14px 4px 4px;
+      text-decoration: none;
+    }
+
+    .avatar-circle {
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, var(--pu), var(--pl));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .user-email-sm {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--tx);
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* WORKSPACE */
+    .workspace {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* FORM PANEL */
+    .form-panel {
+      width: 550px;
+      background: var(--wh);
+      border-right: 1px solid var(--bd);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* PROGRESS BAR */
+    .progress-container {
+      padding: 24px 24px 0;
+      border-bottom: 1px solid var(--bd);
+      background: var(--wh);
+    }
+
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      list-style: none;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .progress-steps::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--bd);
+      z-index: 1;
+    }
+
+    .step-item {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .step-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--wh);
+      border: 2px solid var(--bd);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--mt);
+      transition: all 0.3s ease;
+    }
+
+    .step-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--mt);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: color 0.3s;
+    }
+
+    .step-item.active .step-circle {
+      border-color: var(--pu);
+      background: var(--pu);
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+    }
+
+    .step-item.active .step-label {
+      color: var(--pu);
+    }
+
+    .step-item.completed .step-circle {
+      border-color: var(--pu);
+      color: var(--pu);
+    }
+
+    /* STEP CONTENTS */
+    .steps-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .steps-wrapper::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .steps-wrapper::-webkit-scrollbar-thumb {
+      background: var(--bd);
+      border-radius: 6px;
+    }
+
+    .step-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .step-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .step-header {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--tx);
+      margin-bottom: 6px;
+    }
+
+    .step-desc {
+      font-size: 13px;
+      color: var(--mt);
+      margin-bottom: 24px;
+    }
+
+    /* FORM FIELDS */
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--mt);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1.5px solid var(--bd);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font: 500 14px 'Plus Jakarta Sans', sans-serif;
+      color: var(--tx);
+      background: var(--bg);
+      outline: none;
+      transition: .2s;
+      resize: none;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--pu);
+      background: var(--wh);
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, .1);
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: var(--mt);
+      opacity: 0.6;
+    }
+
+    .field textarea {
+      height: 100px;
+      line-height: 1.5;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* PHOTO UPLOAD */
+    .photo-upload {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .photo-preview {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px dashed var(--bd);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .photo-preview.has-img img {
+      display: block;
+    }
+
+    .photo-preview.has-img svg {
+      display: none;
+    }
+
+    .photo-preview svg {
+      width: 24px;
+      height: 24px;
+      color: var(--mt);
+    }
+
+    .photo-upload-btn {
+      position: relative;
+      overflow: hidden;
+      background: var(--wh);
+      border: 1.5px solid var(--bd);
+      color: var(--tx);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font: 600 13px 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .photo-upload-btn:hover {
+      border-color: var(--pu);
+      color: var(--pu);
+    }
+
+    .photo-upload-btn input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .photo-remove {
+      font-size: 12px;
+      color: var(--danger);
+      cursor: pointer;
+      font-weight: 600;
+      display: none;
+    }
+
+    .photo-preview.has-img~.photo-remove {
+      display: inline-block;
+    }
+
+    /* DYNAMIC LISTS */
+    .add-btn {
+      width: 100%;
+      border: 1.5px dashed var(--bd);
+      background: none;
+      border-radius: 10px;
+      padding: 12px;
+      font: 600 13px 'Plus Jakarta Sans', sans-serif;
+      color: var(--mt);
+      cursor: pointer;
+      transition: .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .add-btn:hover {
+      border-color: var(--pu);
+      color: var(--pu);
+      background: var(--btn-hov);
+    }
+
+    .add-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .entry {
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+      background: var(--wh);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      position: relative;
+    }
+
+    .entry-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--bg);
+    }
+
+    .entry-label {
+      font: 700 14px 'Plus Jakarta Sans', sans-serif;
+      color: var(--tx);
+    }
+
+    .rm-btn {
+      background: var(--danger-bg);
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: .15s;
+      border-radius: 6px;
+    }
+
+    .rm-btn:hover {
+      filter: brightness(0.9);
+    }
+
+    .rm-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .cb-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--tx);
+      margin-top: 8px;
+    }
+
+    .cb-row input[type=checkbox] {
+      accent-color: var(--pu);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .skills-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .skill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--btn-hov);
+      color: var(--pu);
+      padding: 6px 12px;
+      border-radius: 100px;
+      font: 600 12px 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .skill-tag button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--pu);
+      font-size: 14px;
+      line-height: 1;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.7;
+      transition: 0.2s;
+    }
+
+    .skill-tag button:hover {
+      opacity: 1;
+      color: var(--danger);
+    }
+
+    /* FORM FOOTER NAV */
+    .form-footer {
+      padding: 20px 24px;
+      border-top: 1px solid var(--bd);
+      background: var(--wh);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .btn-prev,
+    .btn-next {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font: 700 14px 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      transition: .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-prev {
+      background: var(--bg);
+      border: 1.5px solid var(--bd);
+      color: var(--tx);
+    }
+
+    .btn-prev:hover {
+      border-color: var(--mt);
+    }
+
+    .btn-prev:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-next {
+      background: var(--pu);
+      border: 1.5px solid var(--pu);
+      color: #fff;
+    }
+
+    .btn-next:hover {
+      background: var(--pu2);
+      border-color: var(--pu2);
+    }
+
+    .btn-next.finish {
+      background: #059669;
+      border-color: #059669;
+    }
+
+    .btn-next.finish:hover {
+      background: #047857;
+      border-color: #047857;
+    }
+
+    /* PREVIEW PANEL */
+    .preview-panel {
+      flex: 1;
+      background: var(--preview-bg);
+      overflow-y: auto;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .preview-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .preview-panel::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 8px;
+    }
+
+    [data-theme="dark"] .preview-panel::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 794px;
+      margin-bottom: 20px;
+    }
+
+    .preview-label {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--mt);
+    }
+
+    /* CV SHEET (A4 dimensions roughly) */
+    .cv-sheet {
+      background: #fff;
+      width: 100%;
+      max-width: 794px;
+      min-height: 1123px;
+      box-shadow: var(--sh);
+      padding: 0;
+      color: #111;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* The styling of the CV content will be handled primarily via JS rendering and internal classes,
+   but we will set a base standard font here. */
+    .cv-sheet {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--tx);
+      color: var(--bg);
+      padding: 14px 24px;
+      border-radius: 12px;
+      font: 600 14px 'Plus Jakarta Sans', sans-serif;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1
+    }
+
+    .toast.success {
+      background: #059669;
+      color: #fff;
+    }
+
+    .toast.error {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .toast.warning {
+      background: #f59e0b;
+      color: #fff;
+    }
+
+    .toast svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    @media(max-width:1000px) {
+      .workspace {
+        flex-direction: column;
+      }
+
+      .form-panel {
+        width: 100%;
+        flex: 1;
+        border-right: none;
+        border-bottom: 1px solid var(--bd);
+      }
+
+      .preview-panel {
+        display: none;
+      }
+
+      /* In real app, we'd add a toggle button to show preview on mobile */
+      .mobile-preview-btn {
+        display: inline-flex;
+      }
+    }
+
+    @media(min-width:1001px) {
+      .mobile-preview-btn {
+        display: none !important;
+      }
+    }
+  </style>
+    <script src='../js/theme.js'></script>
+</head>
+
+<body>
+
+  <nav>
+    <div class="nav-l">
+      <a href="dashboard.html" class="logo">
+        <div class="logo-icon"><svg viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg></div>
+        SmartCV
+      </a>
+      <div class="sep"></div>
+      <input id="cvTitle" value="My CV" />
+    </div>
+    <div class="nav-r">
+      <button class="btn-icon mobile-preview-btn" id="btnTogglePreview" title="Toggle Preview">
+        <svg viewBox="0 0 24 24">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      </button>
+      <button class="btn-icon" id="btnTheme" title="Toggle Theme" onclick="toggleTheme()">
+        <svg viewBox="0 0 24 24" id="iconMoon">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      </button>
+      <button class="btn-pdf" onclick="downloadPDF()" title="Download PDF">
+        <svg viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        Export PDF
+      </button>
+      <button class="btn-ai" id="btnAI" onclick="aiGenerate()">✦ AI Magic</button>
+      <button class="btn-save" id="btnSave" onclick="saveCV()">Save CV</button>
+      <a href="profile.html" class="user-badge-sm">
+        <div class="avatar-circle" id="headerAvatar">U</div>
+      </a>
+    </div>
+  </nav>
+
+  <div class="workspace">
+    <!-- FORM PANEL -->
+    <div class="form-panel" id="formPanel">
+
+      <div class="progress-container">
+        <ul class="progress-steps" id="progressSteps">
+          <!-- Generated by JS -->
+        </ul>
+      </div>
+
+      <div class="steps-wrapper" id="stepsWrapper">
+
+        <!-- STEP 1: Personal Info -->
+        <div class="step-content active" id="step-1">
+          <h2 class="step-header">Personal Information</h2>
+          <p class="step-desc">Start with your core details and contact information.</p>
+
+          <div class="photo-upload">
+            <div class="photo-preview" id="photoPreview">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <img id="photoImg" src="" alt="Profile">
+            </div>
+            <div>
+              <label class="photo-upload-btn">
+                Upload Photo
+                <input type="file" id="photoInput" accept="image/png, image/jpeg, image/jpg">
+              </label>
+              <span class="photo-remove" id="photoRemove" onclick="removePhoto()">Remove</span>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field"><label>Full Name</label><input id="pName" placeholder="John Doe" /></div>
+            <div class="field"><label>Job Title</label><input id="pTitle" placeholder="Software Engineer" /></div>
+            <div class="field"><label>Email</label><input id="pEmail" type="email" placeholder="john@example.com" />
+            </div>
+            <div class="field"><label>Phone</label><input id="pPhone" placeholder="+1 234 567 890" /></div>
+            <div class="field"><label>Address / City</label><input id="pLocation" placeholder="New York, USA" /></div>
+            <div class="field"><label>Nationality (Optional)</label><input id="pNationality" placeholder="American" />
+            </div>
+            <div class="field"><label>Date of Birth (Optional)</label><input id="pDob" type="date" /></div>
+            <div class="field"><label>LinkedIn</label><input id="pLinkedin" placeholder="linkedin.com/in/johndoe" />
+            </div>
+            <div class="field"><label>GitHub</label><input id="pGithub" placeholder="github.com/johndoe" /></div>
+            <div class="field"><label>Portfolio</label><input id="pPortfolio" placeholder="johndoe.com" /></div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Summary -->
+        <div class="step-content" id="step-2">
+          <h2 class="step-header">Professional Summary</h2>
+          <p class="step-desc">Write a short pitch highlighting your career goals and strengths.</p>
+          <div class="field">
+            <textarea id="pSummary" placeholder="e.g. Innovative software engineer with 5+ years of experience..."
+              style="height:150px"></textarea>
+          </div>
+        </div>
+
+        <!-- STEP 3: Work Experience -->
+        <div class="step-content" id="step-3">
+          <h2 class="step-header">Work Experience</h2>
+          <p class="step-desc">List your relevant work history, starting with the most recent.</p>
+          <div id="expList"></div>
+          <button class="add-btn" onclick="addExp()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Experience
+          </button>
+        </div>
+
+        <!-- STEP 4: Education & Certifications -->
+        <div class="step-content" id="step-4">
+          <h2 class="step-header">Education</h2>
+          <p class="step-desc">Add your academic background.</p>
+          <div id="eduList"></div>
+          <button class="add-btn" onclick="addEdu()" style="margin-bottom:32px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Education
+          </button>
+
+          <h2 class="step-header">Certifications & Courses</h2>
+          <p class="step-desc">Include relevant certificates and additional training.</p>
+          <div id="certList"></div>
+          <button class="add-btn" onclick="addCert()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Certification
+          </button>
+        </div>
+
+        <!-- STEP 5: Skills & Languages -->
+        <div class="step-content" id="step-5">
+          <h2 class="step-header">Skills</h2>
+          <p class="step-desc">Highlight your technical and soft skills.</p>
+
+          <div class="field">
+            <label>Technical Skills (press Enter)</label>
+            <input id="techSkillInput" placeholder="e.g. React, Python, Data Analysis..."
+              onkeydown="addSkill(event, 'tech')" />
+            <div class="skills-wrap" id="techSkillsWrap"></div>
+          </div>
+
+          <div class="field" style="margin-top:20px;">
+            <label>Soft Skills (press Enter)</label>
+            <input id="softSkillInput" placeholder="e.g. Leadership, Communication..."
+              onkeydown="addSkill(event, 'soft')" />
+            <div class="skills-wrap" id="softSkillsWrap"></div>
+          </div>
+
+          <h2 class="step-header" style="margin-top:32px;">Languages</h2>
+          <p class="step-desc">What languages do you speak?</p>
+          <div id="langList"></div>
+          <button class="add-btn" onclick="addLang()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Language
+          </button>
+        </div>
+
+        <!-- STEP 6: Projects -->
+        <div class="step-content" id="step-6">
+          <h2 class="step-header">Projects</h2>
+          <p class="step-desc">Showcase your best personal or professional projects.</p>
+          <div id="projList"></div>
+          <button class="add-btn" onclick="addProj()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Project
+          </button>
+        </div>
+
+        <!-- STEP 7: Volunteer & Awards -->
+        <div class="step-content" id="step-7">
+          <h2 class="step-header">Volunteer Experience</h2>
+          <p class="step-desc">Highlight your community involvement.</p>
+          <div id="volList"></div>
+          <button class="add-btn" onclick="addVol()" style="margin-bottom:32px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Volunteer Work
+          </button>
+
+          <h2 class="step-header">Awards & Achievements</h2>
+          <p class="step-desc">List any notable awards or recognitions.</p>
+          <div id="awardList"></div>
+          <button class="add-btn" onclick="addAward()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Award
+          </button>
+        </div>
+
+        <!-- STEP 8: Interests & References & Template -->
+        <div class="step-content" id="step-8">
+          <h2 class="step-header">Interests & Hobbies</h2>
+          <p class="step-desc">Show a bit of your personality (press Enter to add).</p>
+          <div class="field">
+            <input id="interestInput" placeholder="e.g. Chess, Photography, Hiking..." onkeydown="addInterest(event)" />
+            <div class="skills-wrap" id="interestWrap"></div>
+          </div>
+
+          <h2 class="step-header" style="margin-top:32px;">References</h2>
+          <p class="step-desc">Add references or mention "Available upon request".</p>
+          <div class="cb-row" style="margin-bottom:12px;">
+            <input type="checkbox" id="refRequest" onchange="toggleRefRequest(this.checked)">
+            <label for="refRequest">Just write "References available upon request"</label>
+          </div>
+          <div id="refListWrapper">
+            <div id="refList"></div>
+            <button class="add-btn" onclick="addRef()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Add Reference
+            </button>
+          </div>
+
+          <h2 class="step-header" style="margin-top:32px;">CV Template</h2>
+          <p class="step-desc">Choose the visual style of your CV.</p>
+          <div class="field">
+            <select id="cvTemplate" onchange="changeTemplate(this.value)">
+              <option value="modern">Modern Professional</option>
+              <option value="executive">Executive Classic</option>
+              <option value="creative">Creative Bold</option>
+              <option value="minimal">Minimal Clean</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FORM FOOTER -->
+      <div class="form-footer">
+        <button class="btn-prev" id="btnPrev" onclick="prevStep()" disabled>
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+          Previous
+        </button>
+        <button class="btn-next" id="btnNext" onclick="nextStep()">
+          Next
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
+            id="nextIcon">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- PREVIEW PANEL -->
+    <div class="preview-panel" id="previewPanel">
+      <div class="preview-header">
+        <div class="preview-label">Live Preview</div>
+      </div>
+      <div class="cv-sheet" id="cvSheet">
+        <!-- Generated dynamically by builder.js -->
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../js/builder.js"></script>
+</body>
+
+</html>

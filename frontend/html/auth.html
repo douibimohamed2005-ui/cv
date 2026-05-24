@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>SmartCV – Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --pu: #7C3AED;
+            --pu2: #6D28D9;
+            --pl: #A78BFA;
+            --pk: #EC4899;
+            --tx: #1a1a2e;
+            --mt: #6b7280;
+            --bd: #e5e7eb;
+            --wh: #ffffff;
+            --er: #ef4444
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--hero-bg, var(--bg, linear-gradient(160deg, #f0f4ff 0%, #fdf2fc 40%, #ede9fe 70%, #fce7f3 100%)));
+            padding: 20px;
+            position: relative;
+            overflow: hidden
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(167, 139, 250, .2) 0%, transparent 70%);
+            pointer-events: none
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -150px;
+            left: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(236, 72, 153, .1) 0%, transparent 70%);
+            pointer-events: none
+        }
+
+        .card {
+            position: relative;
+            background: var(--nav-bg, rgba(255, 255, 255, .92));
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--bd);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(124, 58, 237, .12), 0 4px 16px rgba(0, 0, 0, .06);
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 440px;
+            animation: pop .5s cubic-bezier(.22, 1, .36, 1) both
+        }
+
+        @keyframes pop {
+            from {
+                opacity: 0;
+                transform: scale(.96) translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0)
+            }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--tx);
+            margin-bottom: 8px
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--pu), var(--pl));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .logo-icon svg {
+            width: 19px;
+            height: 19px;
+            stroke: #fff;
+            fill: none;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round
+        }
+
+        .tagline {
+            text-align: center;
+            font-size: 14px;
+            color: var(--mt);
+            margin-bottom: 36px
+        }
+
+        .tabs {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 32px;
+            gap: 4px
+        }
+
+        .tab {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            background: none;
+            border-radius: 9px;
+            font: 600 14px 'Plus Jakarta Sans', sans-serif;
+            color: var(--mt);
+            cursor: pointer;
+            transition: .2s
+        }
+
+        .tab.active {
+            background: var(--wh);
+            color: var(--tx);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .08)
+        }
+
+        .field {
+            margin-bottom: 18px
+        }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--tx);
+            margin-bottom: 6px
+        }
+
+        .field input {
+            width: 100%;
+            border: 1.5px solid var(--bd);
+            border-radius: 10px;
+            padding: 11px 14px;
+            font: 500 14px 'Plus Jakarta Sans', sans-serif;
+            color: var(--tx);
+            background: var(--wh);
+            outline: none;
+            transition: .2s
+        }
+
+        .field input:focus {
+            border-color: var(--pu);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, .1)
+        }
+
+        .field input::placeholder {
+            color: #c4c9d4
+        }
+
+        .field input.err {
+            border-color: var(--er)
+        }
+
+        .err-msg {
+            font-size: 12px;
+            color: var(--er);
+            margin-top: 4px;
+            display: none
+        }
+
+        .err-msg.show {
+            display: block
+        }
+
+        .forgot {
+            text-align: right;
+            margin-top: -12px;
+            margin-bottom: 18px
+        }
+
+        .forgot a {
+            font-size: 13px;
+            color: var(--pu);
+            text-decoration: none;
+            font-weight: 600
+        }
+
+        .forgot a:hover {
+            text-decoration: underline
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--pu), var(--pu2));
+            color: #fff;
+            border: none;
+            padding: 13px;
+            border-radius: 12px;
+            font: 700 15px 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, .4);
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            opacity: .93
+        }
+
+        .btn-submit:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--bd)
+        }
+
+        .divider span {
+            font-size: 12px;
+            color: var(--mt);
+            font-weight: 600;
+            white-space: nowrap
+        }
+
+        .btn-social {
+            width: 100%;
+            background: var(--wh);
+            border: 1.5px solid var(--bd);
+            border-radius: 12px;
+            padding: 11px;
+            font: 600 14px 'Plus Jakarta Sans', sans-serif;
+            color: var(--tx);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: .2s;
+            margin-bottom: 10px
+        }
+
+        .btn-social:hover {
+            border-color: var(--pu);
+            background: #f9f7ff
+        }
+
+        .btn-social svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .switch {
+            text-align: center;
+            font-size: 13px;
+            color: var(--mt);
+            margin-top: 4px
+        }
+
+        .switch button {
+            background: none;
+            border: none;
+            color: var(--pu);
+            font: 700 13px 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            padding: 0
+        }
+
+        .switch button:hover {
+            text-decoration: underline
+        }
+
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--tx);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font: 600 14px 'Plus Jakarta Sans', sans-serif;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+            transform: translateX(120%);
+            transition: .3s cubic-bezier(.22, 1, .36, 1);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .toast.show {
+            transform: translateX(0)
+        }
+
+        .toast.success {
+            background: #059669
+        }
+
+        .toast.error {
+            background: var(--er)
+        }
+
+        .panel {
+            display: none
+        }
+
+        .panel.active {
+            display: block;
+            animation: fadeIn .3s both
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(255, 255, 255, .4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+    <script src='../js/theme.js'></script>
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+            </div>
+            SmartCV
+        </div>
+        <p class="tagline" id="tagline">Sign in to your account</p>
+
+        <div class="tabs">
+            <button class="tab active" id="tabLogin" onclick="switchTab('login')">Sign In</button>
+            <button class="tab" id="tabRegister" onclick="switchTab('register')">Create Account</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div class="panel active" id="panelLogin">
+            <div class="field">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="you@example.com" />
+                <div class="err-msg" id="loginEmailErr">Please enter a valid email</div>
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <input type="password" id="loginPass" placeholder="••••••••" />
+                <div class="err-msg" id="loginPassErr">Password must be at least 6 characters</div>
+            </div>
+            <div class="forgot"><a href="forgot.html">Forgot password?</a></div>
+            <button class="btn-submit" id="btnLogin" onclick="handleLogin()">Sign In</button>
+            <div class="divider"><span>or continue with</span></div>
+            <div id="googleBtnLogin" style="display:flex; justify-content:center; margin-bottom:10px;"></div>
+        </div>
+
+        <!-- REGISTER -->
+        <div class="panel" id="panelRegister">
+            <div class="field">
+                <label>Email</label>
+                <input type="email" id="regEmail" placeholder="you@example.com" />
+                <div class="err-msg" id="regEmailErr">Please enter a valid email</div>
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <input type="password" id="regPass" placeholder="Min. 6 characters" />
+                <div class="err-msg" id="regPassErr">Password must be at least 6 characters</div>
+            </div>
+            <button class="btn-submit" id="btnRegister" onclick="handleRegister()">Create Account</button>
+            <div class="divider"><span>or continue with</span></div>
+            <div id="googleBtnRegister" style="display:flex; justify-content:center; margin-bottom:10px;"></div>
+        </div>
+
+        <div class="switch" id="switchText">
+            Don't have an account? <button onclick="switchTab('register')">Sign Up</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ── CONFIG ──────────────────────────────────────────────────────────
+        // Change this if your backend runs on a different port
+        const API = 'http://localhost:3000/api'
+
+        // ── TAB SWITCH ─────────────────────────────────────────────────────
+        function switchTab(tab) {
+            document.getElementById('tabLogin').classList.toggle('active', tab === 'login')
+            document.getElementById('tabRegister').classList.toggle('active', tab === 'register')
+            document.getElementById('panelLogin').classList.toggle('active', tab === 'login')
+            document.getElementById('panelRegister').classList.toggle('active', tab === 'register')
+            document.getElementById('tagline').textContent =
+                tab === 'login' ? 'Sign in to your account' : 'Create your free account'
+            document.getElementById('switchText').innerHTML =
+                tab === 'login'
+                    ? "Don't have an account? <button onclick=\"switchTab('register')\">Sign Up</button>"
+                    : "Already have an account? <button onclick=\"switchTab('login')\">Sign In</button>"
+        }
+
+        // ── TOAST ───────────────────────────────────────────────────────────
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById('toast')
+            t.textContent = msg
+            t.className = 'toast ' + type + ' show'
+            setTimeout(() => t.classList.remove('show'), 3500)
+        }
+
+        // ── LOADING STATE ───────────────────────────────────────────────────
+        function setLoading(btn, loading, label) {
+            btn.disabled = loading
+            btn.innerHTML = loading ? '<div class="spinner"></div>' : label
+        }
+
+        // ── VALIDATION HELPERS ──────────────────────────────────────────────
+        function validateEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) }
+        function showErr(id, show) { document.getElementById(id).classList.toggle('show', show) }
+        function markErr(id, show) { document.getElementById(id)?.classList.toggle('err', show) }
+
+        // ── LOGIN ───────────────────────────────────────────────────────────
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim()
+            const pass = document.getElementById('loginPass').value
+
+            // Client-side validation
+            let ok = true
+            if (!validateEmail(email)) { showErr('loginEmailErr', true); markErr('loginEmail', true); ok = false }
+            else { showErr('loginEmailErr', false); markErr('loginEmail', false) }
+            if (pass.length < 6) { showErr('loginPassErr', true); markErr('loginPass', true); ok = false }
+            else { showErr('loginPassErr', false); markErr('loginPass', false) }
+            if (!ok) return
+
+            const btn = document.getElementById('btnLogin')
+            setLoading(btn, true, 'Sign In')
+
+            try {
+                // ── REAL API CALL to backend ──
+                const res = await fetch(`${API}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password: pass }),
+                })
+                const data = await res.json()
+
+                if (!res.ok) {
+                    // Server returned an error (wrong password, user not found, etc.)
+                    showToast(data.error || 'Login failed', 'error')
+                    setLoading(btn, false, 'Sign In')
+                    return
+                }
+
+                // Success — save token and user info to localStorage
+                localStorage.setItem('sc_token', data.access_token)
+                localStorage.setItem('sc_user', JSON.stringify(data.user))
+
+                showToast('Welcome back! 🎉', 'success')
+                location.href = 'dashboard.html'
+
+            } catch (err) {
+                // Network error — backend not running or wrong URL
+                showToast('Cannot connect to server. Is the backend running?', 'error')
+                setLoading(btn, false, 'Sign In')
+            }
+        }
+
+        // ── REGISTER ────────────────────────────────────────────────────────
+        async function handleRegister() {
+            const email = document.getElementById('regEmail').value.trim()
+            const pass = document.getElementById('regPass').value
+
+            // Client-side validation
+            let ok = true
+            if (!validateEmail(email)) { showErr('regEmailErr', true); markErr('regEmail', true); ok = false }
+            else { showErr('regEmailErr', false); markErr('regEmail', false) }
+            if (pass.length < 6) { showErr('regPassErr', true); markErr('regPass', true); ok = false }
+            else { showErr('regPassErr', false); markErr('regPass', false) }
+            if (!ok) return
+
+            const btn = document.getElementById('btnRegister')
+            setLoading(btn, true, 'Create Account')
+
+            try {
+                // ── REAL API CALL to backend ──
+                const res = await fetch(`${API}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password: pass }),
+                })
+                const data = await res.json()
+
+                if (!res.ok) {
+                    showToast(data.error || 'Registration failed', 'error')
+                    setLoading(btn, false, 'Create Account')
+                    return
+                }
+
+                // Success — account created, now auto-login
+                showToast('Account created! Signing you in...', 'success')
+
+                // Auto-login after register
+                const loginRes = await fetch(`${API}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password: pass }),
+                })
+                const loginData = await loginRes.json()
+
+                if (loginRes.ok) {
+                    localStorage.setItem('sc_token', loginData.access_token)
+                    localStorage.setItem('sc_user', JSON.stringify(loginData.user))
+                }
+
+                setTimeout(() => location.href = 'dashboard.html', 1000)
+
+            } catch (err) {
+                showToast('Cannot connect to server. Is the backend running?', 'error')
+                setLoading(btn, false, 'Create Account')
+            }
+        }
+
+        // ── ENTER KEY SUPPORT ───────────────────────────────────────────────
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Enter') return
+            if (document.getElementById('panelLogin').classList.contains('active')) handleLogin()
+            else handleRegister()
+        })
+
+        // ── REDIRECT IF ALREADY LOGGED IN ──────────────────────────────────
+        if (localStorage.getItem('sc_token')) {
+            location.href = 'dashboard.html'
+        }
+
+        // ── GOOGLE AUTHENTICATION ──────────────────────────────────────────
+        async function handleGoogleAuth(response) {
+            try {
+                const res = await fetch(`${API}/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: response.credential })
+                })
+                const data = await res.json()
+
+                if (!res.ok) {
+                    showToast(data.error || 'Google login failed', 'error')
+                    return
+                }
+
+                localStorage.setItem('sc_token', data.access_token)
+                localStorage.setItem('sc_user', JSON.stringify(data.user))
+
+                showToast('Welcome via Google! 🎉', 'success')
+                location.href = 'dashboard.html'
+            } catch (err) {
+                showToast('Cannot connect to server for Google Login.', 'error')
+            }
+        }
+
+        window.onload = async () => {
+            try {
+                const res = await fetch(`${API}/auth/config`)
+                const { GOOGLE_CLIENT_ID } = await res.json()
+                
+                if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID_HERE') {
+                    google.accounts.id.initialize({
+                        client_id: GOOGLE_CLIENT_ID,
+                        callback: handleGoogleAuth
+                    })
+                    
+                    const btnOptions = { theme: 'outline', size: 'large', width: '100%' }
+                    google.accounts.id.renderButton(document.getElementById('googleBtnLogin'), btnOptions)
+                    google.accounts.id.renderButton(document.getElementById('googleBtnRegister'), btnOptions)
+                } else {
+                    const fallbackHTML = `<button class="btn-social" onclick="showToast('Google Client ID is missing in backend .env','error')">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        Continue with Google
+                    </button>`
+                    document.getElementById('googleBtnLogin').innerHTML = fallbackHTML
+                    document.getElementById('googleBtnRegister').innerHTML = fallbackHTML
+                }
+            } catch (err) {
+                console.error('Could not fetch config', err)
+            }
+        }
+    </script>
+</body>
+
+</html>

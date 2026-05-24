@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SmartCV – View</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--pu:#7C3AED;--pu2:#6D28D9;--pl:#A78BFA;--tx:#1a1a2e;--mt:#6b7280;--bd:#e5e7eb;--bg:#e2e8f0;--wh:#fff}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;flex-direction:column}
+
+/* NAV */
+nav{background:var(--wh);border-bottom:1px solid var(--bd);padding:0 20px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:50}
+.logo{display:flex;align-items:center;gap:7px;font-weight:800;font-size:16px;color:var(--tx);text-decoration:none}
+.logo-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--pu),var(--pl));border-radius:7px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.nav-l{display:flex;align-items:center;gap:10px}
+.sep{width:1px;height:20px;background:var(--bd)}
+.cv-title-display{font:700 15px 'Plus Jakarta Sans',sans-serif;color:var(--tx)}
+.nav-r{display:flex;align-items:center;gap:8px}
+
+.btn-back{background:none;border:1.5px solid var(--bd);color:var(--mt);padding:7px 12px;border-radius:9px;font:700 13px 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.btn-back:hover{border-color:var(--pu);color:var(--pu)}
+.btn-back svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.btn-print{background:linear-gradient(135deg,var(--pu),var(--pu2));color:#fff;border:none;padding:8px 18px;border-radius:9px;font:700 13px 'Plus Jakarta Sans',sans-serif;cursor:pointer;box-shadow:0 3px 10px rgba(124,58,237,.3);transition:.2s;display:flex;align-items:center;gap:6px}
+.btn-print:hover{opacity:.92}
+.btn-print svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* WORKSPACE */
+.workspace{flex:1;overflow-y:auto;padding:40px 20px;display:flex;flex-direction:column;align-items:center}
+
+/* PREVIEW SHEET */
+.cv-sheet{background:#fff;width:100%;max-width:800px;min-height:1130px;box-shadow:0 8px 40px rgba(0,0,0,.15);padding:60px 70px;font-family:'Lora',serif;font-size:14px;line-height:1.6;color:#222;margin-bottom:40px}
+.cv-name{font-size:28px;font-weight:600;color:#111;margin-bottom:6px}
+.cv-contacts{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:#555;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:4px}
+.cv-divider{border:none;border-top:2px solid #1a1a2e;margin:16px 0 20px}
+.cv-sec-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.1px;color:#888;margin-bottom:10px;margin-top:24px}
+.cv-para{font-size:13px;color:#333;margin-bottom:16px;line-height:1.7}
+.cv-exp{margin-bottom:16px}
+.cv-exp-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.cv-exp-head b{font-size:14.5px;color:#111}
+.cv-exp-head span{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#666}
+.cv-dates{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#888;min-width:140px;text-align:right}
+.cv-edu{margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline}
+.cv-edu b{font-size:14.5px;color:#111}
+.cv-edu span{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#666}
+.cv-skills-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.cv-skill{background:#f3f4f6;padding:4px 12px;border-radius:100px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:#555}
+
+/* LOADING */
+.loading-state, .error-state{text-align:center;padding:80px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+.spinner-lg{width:40px;height:40px;border:4px solid #e5e7eb;border-top-color:var(--pu);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* PRINT MODE */
+@media print {
+  body { background: #fff; }
+  nav { display: none !important; }
+  .workspace { padding: 0 !important; overflow: visible !important; display: block !important; }
+  .cv-sheet { box-shadow: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; min-height: 0 !important; }
+  @page { margin: 20mm; }
+}
+</style>
+    <script src='../js/theme.js'></script>
+</head>
+<body>
+<nav id="navBar">
+  <div class="nav-l">
+    <a href="dashboard.html" class="logo">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      SmartCV
+    </a>
+    <div class="sep"></div>
+    <span class="cv-title-display" id="cvPageTitle">Loading...</span>
+  </div>
+  <div class="nav-r">
+    <button class="btn-back" onclick="location.href='dashboard.html'" title="Back">
+      <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Dashboard
+    </button>
+    <button class="btn-print" onclick="downloadPDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Print / PDF
+    </button>
+  </div>
+</nav>
+
+<div class="workspace" id="workspace">
+  <div class="loading-state" id="loadingState" style="display: none;"></div>
+  <div class="error-state" id="errorState" style="display: none;"></div>
+  
+  <div class="cv-sheet" id="cvRender"></div>
+</div>
+
+<script src="../js/view.js"></script>
+</body>
+</html>
