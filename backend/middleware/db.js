@@ -11,6 +11,9 @@ const pool = mysql.createPool({
     waitForConnections: true,
     connectionLimit: 10,
     namedPlaceholders: true,
+    ssl: {
+        rejectUnauthorized: false
+    }
 })
 
 pool.getConnection()
