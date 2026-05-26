@@ -1,5 +1,6 @@
 // js/view.js
-const API = 'http://localhost:3000/api'
+const API_BASE_URL = 'https://cv-pttb.onrender.com';
+const API = `${API_BASE_URL}/api`;
 const token = localStorage.getItem('sc_token')
 const user = (() => { try { return JSON.parse(localStorage.getItem('sc_user')) } catch { return null } })()
 if (!token || !user) location.href = 'auth.html'

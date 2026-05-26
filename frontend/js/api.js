@@ -1,7 +1,8 @@
 // js/api.js  ─  Shared API helper
 // Import this in every page:  <script src="../js/api.js"></script>
 
-const API = 'http://localhost:3000/api'
+const API_BASE_URL = 'https://cv-pttb.onrender.com';
+const API = `${API_BASE_URL}/api`;
 
 // ── Auth helpers ──────────────────────────────────────
 export function getToken() { return localStorage.getItem('sc_token') }

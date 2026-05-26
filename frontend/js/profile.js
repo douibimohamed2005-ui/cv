@@ -1,5 +1,6 @@
 // js/profile.js
-const API = 'http://localhost:3000/api'
+const API_BASE_URL = 'https://cv-pttb.onrender.com';
+const API = `${API_BASE_URL}/api`;
 const token = localStorage.getItem('sc_token')
 const user = (() => { try { return JSON.parse(localStorage.getItem('sc_user')) } catch { return null } })()
 if (!token || !user) location.href = 'auth.html'
@@ -38,7 +39,7 @@ async function loadProfile() {
         if (p.avatar_url) {
             const avatarImg = document.getElementById('avatarImg')
             const avatarInitial = document.getElementById('avatarInitial')
-            if (avatarImg) { avatarImg.src = `http://localhost:3000${p.avatar_url}`; avatarImg.style.display = 'block' }
+            if (avatarImg) { avatarImg.src = `${API_BASE_URL}${p.avatar_url}`; avatarImg.style.display = 'block' }
             if (avatarInitial) avatarInitial.style.display = 'none'
         }
     } catch (err) {
@@ -102,7 +103,7 @@ async function handleAvatarUpload(e) {
         const avatarImg = document.getElementById('avatarImg')
         const avatarInitial = document.getElementById('avatarInitial')
         if (avatarImg) {
-            avatarImg.src = `http://localhost:3000${data.avatar_url}?t=${Date.now()}`
+            avatarImg.src = `${API_BASE_URL}${data.avatar_url}?t=${Date.now()}`
             avatarImg.style.display = 'block'
         }
         if (avatarInitial) avatarInitial.style.display = 'none'
